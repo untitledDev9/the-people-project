@@ -88,7 +88,10 @@ export default function AdminParticipantsPage() {
           <p className="eyebrow">Participants</p>
           <h1 className="display mt-2 text-4xl sm:text-5xl">Everyone met</h1>
         </div>
-        <Link href="/sharp/participants/new" className="btn-solid">+ Add participant</Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/sharp/participants/bulk" className="btn-outline">Add many at once</Link>
+          <Link href="/sharp/participants/new" className="btn-solid">+ Add participant</Link>
+        </div>
       </div>
 
       {slots && slots.vacant.length > 0 && (

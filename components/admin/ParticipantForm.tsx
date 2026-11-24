@@ -209,6 +209,7 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
           </h1>
         </div>
         {person && <Link href={`/sharp/participants/${person.id}/preview`} className="btn-outline">Preview profile</Link>}
+        {!editing && <Link href="/sharp/participants/bulk" className="btn-outline">Add many at once</Link>}
       </div>
 
       {!editing && (

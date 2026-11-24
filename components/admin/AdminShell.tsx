@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutDashboard, LogOut, Plus, Settings, Users } from "lucide-react";
+import { LayoutDashboard, Layers, LogOut, Plus, Settings, Users } from "lucide-react";
 import { api, isUnauthorized } from "@/lib/api";
 import * as admin from "@/services/admin";
 import { useToast } from "@/components/ui/Toast";
@@ -13,6 +13,7 @@ const nav = [
   { href: "/sharp", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/sharp/participants", label: "Participants", icon: Users, exact: false },
   { href: "/sharp/participants/new", label: "Add Participant", icon: Plus, exact: true },
+  { href: "/sharp/participants/bulk", label: "Add Many", icon: Layers, exact: true },
   { href: "/sharp/settings", label: "Settings", icon: Settings, exact: false },
 ];
 
@@ -78,7 +79,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   const active = (href: string, exact: boolean) =>
-    exact ? pathname === href : pathname.startsWith(href) && pathname !== "/sharp/participants/new";
+    exact ? pathname === href : pathname.startsWith(href) && pathname !== "/sharp/participants/new" && pathname !== "/sharp/participants/bulk";
 
   return (
     <div className="min-h-dvh bg-paper md:grid md:grid-cols-[15rem_1fr]">
