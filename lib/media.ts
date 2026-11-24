@@ -10,7 +10,7 @@ export function optimize(url: string | null | undefined, width = 800): string | 
 /** Poster frame for a Cloudinary video. */
 export function videoPoster(url: string | null | undefined, width = 800): string | null {
   if (!url || !isCloudinary(url)) return null;
-  return url.replace("/upload/", `/upload/so_0,f_jpg,q_auto,w_${width}/`).replace(/\.\w+$/, ".jpg");
+  return url.replace("/upload/", `/upload/so_1,f_jpg,q_auto,c_limit,w_${width}/`).replace(/\.\w+$/, ".jpg");
 }
 
 /**

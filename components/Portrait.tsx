@@ -1,9 +1,13 @@
-import { optimize } from "@/lib/media";
+import { optimize, videoPoster } from "@/lib/media";
 import { pad } from "@/lib/format";
 
-/** Approved portrait, or a quiet typographic placeholder when none was uploaded. */
+/**
+ * The approved portrait. With no photo, the video's own first frame is used as the picture, and only
+ * when there is no video either does it fall back to a quiet typographic placeholder.
+ */
 export function Portrait({
   url,
+  videoUrl = null,
   number,
   alt,
   width = 800,
@@ -11,13 +15,14 @@ export function Portrait({
   className = "",
 }: {
   url: string | null;
+  videoUrl?: string | null;
   number: number;
   alt: string;
   width?: number;
   priority?: boolean;
   className?: string;
 }) {
-  const src = optimize(url, width);
+  const src = optimize(url, width) ?? videoPoster(videoUrl, width);
   return (
     <div className={`relative aspect-[4/5] w-full overflow-hidden bg-sand ${className}`}>
       {src ? (

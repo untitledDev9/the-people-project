@@ -6,6 +6,7 @@ import { Check, RefreshCw, Upload, X } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { getDuplicates, getErrorMessage } from "@/lib/api";
 import { pad } from "@/lib/format";
+import { takePendingFiles } from "@/lib/pendingFiles";
 import { checkFile, uploadDirect, type UploadHandle } from "@/lib/upload";
 import * as admin from "@/services/admin";
 import type { SlotInfo, UploadAsset } from "@/types";
@@ -122,7 +123,7 @@ export function BulkUploader() {
     [],
   );
 
-  function addFiles(list: FileList | null) {
+  function addFiles(list: FileList | File[] | null) {
     if (!list?.length) return;
     const room = MAX_FILES - items.length;
     const rejected: string[] = [];
@@ -156,6 +157,13 @@ export function BulkUploader() {
     if (rejected.length) toast.error(rejected.slice(0, 3).join(" · ") + (rejected.length > 3 ? ` (+${rejected.length - 3} more)` : ""));
     if (fresh.length) setItems((prev) => [...prev, ...fresh]);
   }
+
+  // Videos picked in the single add form arrive here.
+  useEffect(() => {
+    const handed = takePendingFiles();
+    if (handed.length) addFiles(handed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function remove(id: string) {
     const it = itemsRef.current.find((i) => i.id === id);

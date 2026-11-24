@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     person.quote ||
     person.biography.slice(0, 160) ||
     `Person #${pad(person.number)} of 5,000 in The 5,000 People Project.`;
-  const image = optimize(person.portraitUrl, 1200);
+  const image = optimize(person.portraitUrl, 1200) ?? videoPoster(person.videoUrl, 1200);
   const url = `${SITE_URL}/people/${pad(person.number)}`;
   return {
     title,
@@ -63,7 +63,7 @@ export default async function PersonPage({ params }: Props) {
 
       <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-6">
-          <Portrait url={person.portraitUrl} number={person.number} alt={`Portrait of ${person.displayName}`} width={1200} priority />
+          <Portrait url={person.portraitUrl} videoUrl={person.videoUrl} number={person.number} alt={`Portrait of ${person.displayName}`} width={1200} priority />
         </div>
 
         <div className="flex flex-col lg:col-span-6 lg:pt-6">

@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/Toast";
 import { getDuplicates, getErrorMessage } from "@/lib/api";
 import { pad, toDateInput } from "@/lib/format";
 import { optimize } from "@/lib/media";
+import { setPendingFiles } from "@/lib/pendingFiles";
 import * as admin from "@/services/admin";
 import type { AdminParticipant, DuplicateMatch, ParticipantPayload, SlotInfo } from "@/types";
 
@@ -67,6 +68,12 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
       /* ignore a corrupt value */
     }
   }, [editing, refreshSlots]);
+
+  function sendToBulk(files: File[]) {
+    setPendingFiles(files);
+    toast.success(`${files.length} videos selected. Opening bulk add.`);
+    router.push("/sharp/participants/bulk");
+  }
 
   function validate(): boolean {
     const e: Errors = {};
@@ -230,7 +237,8 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
           existingUrl={person?.videoUrl}
           removeExisting={removeVideo}
           onRemoveExisting={setRemoveVideo}
-          hint="Uploads as soon as you pick it"
+          hint={editing ? "Uploads as soon as you pick it" : "Pick several to add them all at once"}
+          onMultiple={editing ? undefined : sendToBulk}
         />
 
         <Field label="Display name *" error={errors.displayName}>

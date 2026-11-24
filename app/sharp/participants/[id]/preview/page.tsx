@@ -39,7 +39,7 @@ export default function PreviewPage() {
       </div>
 
       <article className="grid max-w-5xl gap-10 lg:grid-cols-2 lg:gap-14">
-        <Portrait url={p.portraitUrl} number={p.number} alt={`Portrait of ${p.displayName}`} width={900} />
+        <Portrait url={p.portraitUrl} videoUrl={p.videoUrl} number={p.number} alt={`Portrait of ${p.displayName}`} width={900} />
         <div>
           <p className="display text-[7rem] leading-none text-beige tabular-nums" aria-hidden>{pad(p.number)}</p>
           <p className="eyebrow -mt-2">Person #{pad(p.number)} of 5,000</p>

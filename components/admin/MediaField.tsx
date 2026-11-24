@@ -129,6 +129,7 @@ export function MediaField({
   removeExisting,
   onRemoveExisting,
   hint,
+  onMultiple,
 }: {
   upload: MediaUpload;
   label: string;
@@ -136,13 +137,17 @@ export function MediaField({
   removeExisting?: boolean;
   onRemoveExisting?: (remove: boolean) => void;
   hint?: string;
+  /** When set, the picker allows several files and hands them all to this callback if more than one is chosen. */
+  onMultiple?: (files: File[]) => void;
 }) {
   const isVideo = upload.kind === "video";
   const showExisting = Boolean(existingUrl) && !upload.file && !removeExisting;
   const Icon = isVideo ? Video : ImagePlus;
 
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    upload.pick(e.target.files?.[0] ?? null);
+    const files = Array.from(e.target.files ?? []);
+    if (files.length > 1 && onMultiple) onMultiple(files);
+    else upload.pick(files[0] ?? null);
     e.target.value = ""; // allow picking the same file again
   };
 
@@ -151,7 +156,7 @@ export function MediaField({
       <label className="btn-solid cursor-pointer !px-4">
         <Icon className="size-4" />
         {replace ? "Replace" : isVideo ? "Choose video" : "Choose photo"}
-        <input type="file" accept={isVideo ? "video/*" : "image/jpeg,image/png,image/webp"} onChange={onFile} className="sr-only" />
+        <input type="file" accept={isVideo ? "video/*" : "image/jpeg,image/png,image/webp"} multiple={Boolean(onMultiple)} onChange={onFile} className="sr-only" />
       </label>
       <label className="btn-outline cursor-pointer !px-4">
         <Camera className="size-4" />
