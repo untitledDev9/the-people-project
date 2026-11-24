@@ -87,3 +87,31 @@ export interface DuplicateMatch {
   displayName: string;
   dateMet: string;
 }
+
+/** A file already uploaded straight to Cloudinary by the browser. */
+export interface UploadAsset {
+  url: string;
+  publicId: string;
+}
+
+/** `next` is the number the next person gets; `vacant` are empty numbers left by deleted people. */
+export interface SlotInfo {
+  next: number;
+  vacant: number[];
+}
+
+export interface ParticipantPayload {
+  displayName: string;
+  biography: string;
+  quote: string;
+  dateMet: string;
+  eventName: string;
+  location: string;
+  consentConfirmed: boolean;
+  isPublished: boolean;
+  confirmNew: boolean;
+  removePortrait: boolean;
+  removeVideo: boolean;
+  portraitAsset: UploadAsset | null;
+  videoAsset: UploadAsset | null;
+}

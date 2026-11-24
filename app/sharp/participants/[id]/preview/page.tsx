@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Portrait } from "@/components/Portrait";
 import { StatusBadge } from "@/components/admin/StatusBadge";
+import { VideoSources } from "@/components/VideoSources";
 import { Skeleton } from "@/components/ui/States";
 import { getErrorMessage } from "@/lib/api";
 import { formatDate, pad } from "@/lib/format";
@@ -49,7 +50,11 @@ export default function PreviewPage() {
           </p>
           {p.quote && <blockquote className="display mt-8 border-l-2 border-ink pl-5 text-2xl italic">“{p.quote}”</blockquote>}
           {p.biography && <p className="mt-6 whitespace-pre-line text-lg leading-relaxed text-ink/80">{p.biography}</p>}
-          {p.videoUrl && <video src={p.videoUrl} controls preload="metadata" className="mt-8 w-full bg-ink" />}
+          {p.videoUrl && (
+            <video controls playsInline preload="metadata" className="mt-8 w-full bg-ink">
+              <VideoSources url={p.videoUrl} />
+            </video>
+          )}
         </div>
       </article>
     </div>

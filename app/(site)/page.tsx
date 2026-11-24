@@ -4,6 +4,7 @@ import { PersonCard } from "@/components/PersonCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { ErrorState, EmptyState } from "@/components/ui/States";
 import { formatDate, formatNumber, pad } from "@/lib/format";
+import { VideoSources } from "@/components/VideoSources";
 import { optimize, videoPoster } from "@/lib/media";
 import { safe } from "@/lib/safe";
 import { getLatest, getSettings, getStats } from "@/services/public";
@@ -204,7 +205,7 @@ export default async function HomePage() {
                     className="aspect-[4/5] w-full bg-ink object-cover"
                     aria-label={`Video with ${p.displayName}`}
                   >
-                    <source src={p.videoUrl!} />
+                    <VideoSources url={p.videoUrl} />
                   </video>
                   <figcaption className="mt-3 text-sm">
                     <Link href={`/people/${pad(p.number)}`} className="underline underline-offset-4 hover:text-ember">

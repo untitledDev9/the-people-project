@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { AdminOverview, AdminParticipant, AdminSettings, Paginated } from "@/types";
+import type { AdminOverview, AdminParticipant, AdminSettings, Paginated, ParticipantPayload, SlotInfo } from "@/types";
 
 export const login = (email: string, password: string) =>
   api.post<{ email: string }>("/admin/auth/login", { email, password }).then((r) => r.data);
@@ -18,10 +18,21 @@ export const listParticipants = (params: AdminListQuery) =>
   api.get<Paginated<AdminParticipant>>("/admin/participants", { params }).then((r) => r.data);
 export const getParticipant = (id: string) =>
   api.get<AdminParticipant>(`/admin/participants/${id}`).then((r) => r.data);
-export const createParticipant = (form: FormData) =>
-  api.post<AdminParticipant>("/admin/participants", form).then((r) => r.data);
-export const updateParticipant = (id: string, form: FormData) =>
-  api.put<AdminParticipant>(`/admin/participants/${id}`, form).then((r) => r.data);
+// Photos and videos are uploaded straight to Cloudinary first; these calls only send small JSON.
+export const createParticipant = (body: ParticipantPayload) =>
+  api.post<AdminParticipant>("/admin/participants", body).then((r) => r.data);
+export const updateParticipant = (id: string, body: ParticipantPayload) =>
+  api.put<AdminParticipant>(`/admin/participants/${id}`, body).then((r) => r.data);
+export const getSlots = () => api.get<SlotInfo>("/admin/slots").then((r) => r.data);
+export const signUpload = (kind: "image" | "video") =>
+  api
+    .post<{ uploadUrl: string; apiKey: string; params: Record<string, string | number>; signature: string }>(
+      "/admin/uploads/sign",
+      { kind },
+    )
+    .then((r) => r.data);
+export const discardUpload = (kind: "image" | "video", publicId: string) =>
+  api.post("/admin/uploads/discard", { kind, publicId }).then((r) => r.data);
 export const setPublished = (id: string, isPublished: boolean) =>
   api.patch<AdminParticipant>(`/admin/participants/${id}/publish`, { isPublished }).then((r) => r.data);
 export const logReturning = (id: string) =>

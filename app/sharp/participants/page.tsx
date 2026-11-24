@@ -9,9 +9,9 @@ import { EmptyState, Skeleton } from "@/components/ui/States";
 import { useToast } from "@/components/ui/Toast";
 import { getErrorMessage } from "@/lib/api";
 import { formatDate, pad } from "@/lib/format";
-import { optimize } from "@/lib/media";
+import { optimize, videoPoster } from "@/lib/media";
 import * as admin from "@/services/admin";
-import type { AdminParticipant, Paginated } from "@/types";
+import type { AdminParticipant, Paginated, SlotInfo } from "@/types";
 
 export default function AdminParticipantsPage() {
   const toast = useToast();
@@ -24,6 +24,7 @@ export default function AdminParticipantsPage() {
   const [error, setError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<AdminParticipant | null>(null);
   const [busy, setBusy] = useState(false);
+  const [slots, setSlots] = useState<SlotInfo | null>(null);
 
   // Debounce the search box.
   useEffect(() => {
@@ -47,6 +48,13 @@ export default function AdminParticipantsPage() {
     load();
   }, [load]);
 
+  const loadSlots = useCallback(() => {
+    admin.getSlots().then(setSlots).catch(() => {});
+  }, []);
+  useEffect(() => {
+    loadSlots();
+  }, [loadSlots]);
+
   async function togglePublish(p: AdminParticipant) {
     try {
       await admin.setPublished(p.id, !p.isPublished);
@@ -65,6 +73,7 @@ export default function AdminParticipantsPage() {
       toast.success(`#${pad(toDelete.number)} deleted`);
       setToDelete(null);
       load();
+      loadSlots();
     } catch (e) {
       toast.error(getErrorMessage(e));
     } finally {
@@ -81,6 +90,14 @@ export default function AdminParticipantsPage() {
         </div>
         <Link href="/sharp/participants/new" className="btn-solid">+ Add participant</Link>
       </div>
+
+      {slots && slots.vacant.length > 0 && (
+        <p className="mt-6 rounded-lg bg-sand/70 px-4 py-3 text-sm">
+          <strong>Empty numbers:</strong> {slots.vacant.slice(0, 12).map((n) => `#${pad(n)}`).join(", ")}
+          {slots.vacant.length > 12 ? ` and ${slots.vacant.length - 12} more` : ""}. The next person you add fills{" "}
+          <strong>#{pad(slots.next)}</strong>.
+        </p>
+      )}
 
       <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
         <div className="relative">
@@ -125,7 +142,7 @@ export default function AdminParticipantsPage() {
           <>
             <ul className="divide-y divide-ink/10 border-y border-ink/10">
               {data.items.map((p) => {
-                const thumb = optimize(p.portraitUrl, 160);
+                const thumb = optimize(p.portraitUrl, 160) ?? videoPoster(p.videoUrl, 160);
                 return (
                   <li key={p.id} className="flex flex-wrap items-center gap-4 py-4">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -183,8 +200,8 @@ export default function AdminParticipantsPage() {
         {toDelete && (
           <>
             <strong>#{pad(toDelete.number)} {toDelete.displayName}</strong> and their uploaded photo and video will be
-            permanently removed. The number <strong>#{pad(toDelete.number)}</strong> will never be reused. To just hide
-            them from the site, unpublish instead.
+            permanently removed. Nobody else is renumbered: <strong>#{pad(toDelete.number)}</strong> becomes an empty number
+            that the next person you add will take. To just hide them from the site, unpublish instead.
           </>
         )}
       </ConfirmDialog>

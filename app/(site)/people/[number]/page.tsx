@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Portrait } from "@/components/Portrait";
 import { ErrorState } from "@/components/ui/States";
 import { formatDate, pad } from "@/lib/format";
+import { VideoSources } from "@/components/VideoSources";
 import { optimize, videoPoster } from "@/lib/media";
 import { SITE_URL } from "@/lib/site";
 import { getParticipant } from "@/services/public";
@@ -109,7 +110,7 @@ export default async function PersonPage({ params }: Props) {
             poster={videoPoster(person.videoUrl, 1200) ?? undefined}
             className="w-full bg-ink"
           >
-            <source src={person.videoUrl} />
+            <VideoSources url={person.videoUrl} />
           </video>
         </section>
       )}
