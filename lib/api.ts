@@ -4,7 +4,9 @@ import type { DuplicateMatch } from "@/types";
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
 
 export const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  // In the browser use same-origin "/api" (proxied by next.config.ts) so the session cookie is
+  // first-party. Server components have no browser, so they call the API directly.
+  baseURL: typeof window === "undefined" ? `${API_URL}/api` : "/api",
   withCredentials: true,
   // Required by the server's CSRF guard on state-changing admin requests.
   headers: { "X-Requested-With": "XMLHttpRequest" },

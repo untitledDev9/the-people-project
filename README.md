@@ -20,7 +20,7 @@ npm run dev                  # http://localhost:3000
 | `NEXT_PUBLIC_API_URL` | Base URL of the API, e.g. `http://localhost:4000` (no trailing slash) |
 | `NEXT_PUBLIC_SITE_URL` | Public URL of this site. Used for Open Graph, canonical URLs, the sitemap and robots.txt |
 
-For production, edit [`.env.production`](.env.production) (public values only, safe to commit) or set the same variables in your host's dashboard, which take priority. `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing them.
+For production, set these two variables in your host's dashboard (Vercel: Project Settings → Environment Variables). `.env.production` is git-ignored; `.env.production.example` shows the shape. `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing them.
 
 Admin lives at `/sharp` (redirects to `/sharp/login`). The admin account is created from the **server** repo with `npm run create-admin`.
 
