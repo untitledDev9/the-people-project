@@ -112,7 +112,7 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
       } else {
         const created = await admin.createParticipant(buildForm(confirmNew));
         toast.success(`Saved as #${pad(created.number)}${created.isPublished ? " and published" : ""}`);
-        router.push("/admin/participants");
+        router.push("/sharp/participants");
       }
       setDupes(null);
     } catch (err) {
@@ -135,7 +135,7 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
     try {
       const p = await admin.logReturning(id);
       toast.success(`Logged as meeting #${pad(p.number)} again. No new number used.`);
-      router.push("/admin/participants");
+      router.push("/sharp/participants");
     } catch (err) {
       toast.error(getErrorMessage(err));
       setReturningBusy(false);
@@ -154,7 +154,7 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
           </h1>
         </div>
         {person && (
-          <Link href={`/admin/participants/${person.id}/preview`} className="btn-outline">Preview profile</Link>
+          <Link href={`/sharp/participants/${person.id}/preview`} className="btn-outline">Preview profile</Link>
         )}
       </div>
       {!editing && (
@@ -235,7 +235,7 @@ export function ParticipantForm({ initial }: { initial?: AdminParticipant }) {
         <button type="submit" disabled={busy} className="btn-solid">
           {busy ? "Saving…" : editing ? "Save changes" : "Save participant"}
         </button>
-        <Link href="/admin/participants" className="btn-outline">Cancel</Link>
+        <Link href="/sharp/participants" className="btn-outline">Cancel</Link>
       </div>
 
       <ConfirmDialog

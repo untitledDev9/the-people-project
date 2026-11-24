@@ -32,7 +32,7 @@ export default function PreviewPage() {
           {live ? "This is exactly what visitors see." : "Preview only. Visitors cannot see this profile until it is published with consent."}
         </span>
         <span className="flex gap-4">
-          <Link href={`/admin/participants/${p.id}`} className="underline underline-offset-4">Back to editing</Link>
+          <Link href={`/sharp/participants/${p.id}`} className="underline underline-offset-4">Back to editing</Link>
           {live && <Link href={`/people/${pad(p.number)}`} target="_blank" className="underline underline-offset-4">Open public page ↗</Link>}
         </span>
       </div>

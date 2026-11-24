@@ -37,7 +37,7 @@ export default function AdminOverviewPage() {
           <p className="eyebrow">Overview</p>
           <h1 className="display mt-2 text-4xl sm:text-5xl">The journey so far</h1>
         </div>
-        <Link href="/admin/participants/new" className="btn-solid">+ Add participant</Link>
+        <Link href="/sharp/participants/new" className="btn-solid">+ Add participant</Link>
       </div>
 
       <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -61,13 +61,13 @@ export default function AdminOverviewPage() {
       <h2 className="display mt-12 text-2xl">Recent additions</h2>
       {data.recent.length === 0 ? (
         <p className="mt-4 text-stone">
-          Nobody added yet. <Link href="/admin/participants/new" className="underline underline-offset-4">Add the first participant</Link>.
+          Nobody added yet. <Link href="/sharp/participants/new" className="underline underline-offset-4">Add the first participant</Link>.
         </p>
       ) : (
         <ul className="mt-4 divide-y divide-ink/10 border-y border-ink/10">
           {data.recent.map((p) => (
             <li key={p.id}>
-              <Link href={`/admin/participants/${p.id}`} className="flex items-center justify-between gap-4 py-4 hover:bg-sand/50">
+              <Link href={`/sharp/participants/${p.id}`} className="flex items-center justify-between gap-4 py-4 hover:bg-sand/50">
                 <span className="min-w-0">
                   <span className="text-sm text-stone">#{pad(p.number)}</span>{" "}
                   <span className="font-medium">{p.displayName}</span>

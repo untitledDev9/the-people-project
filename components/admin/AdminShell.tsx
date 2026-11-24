@@ -10,17 +10,17 @@ import { useToast } from "@/components/ui/Toast";
 import { Skeleton } from "@/components/ui/States";
 
 const nav = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/admin/participants", label: "Participants", icon: Users, exact: false },
-  { href: "/admin/participants/new", label: "Add Participant", icon: Plus, exact: true },
-  { href: "/admin/settings", label: "Settings", icon: Settings, exact: false },
+  { href: "/sharp", label: "Overview", icon: LayoutDashboard, exact: true },
+  { href: "/sharp/participants", label: "Participants", icon: Users, exact: false },
+  { href: "/sharp/participants/new", label: "Add Participant", icon: Plus, exact: true },
+  { href: "/sharp/settings", label: "Settings", icon: Settings, exact: false },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const toast = useToast();
-  const isLogin = pathname === "/admin/login";
+  const isLogin = pathname === "/sharp/login";
   const [email, setEmail] = useState<string | null>(null);
   const [checking, setChecking] = useState(!isLogin);
 
@@ -32,7 +32,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         const url: string = err?.config?.url ?? "";
         if (isUnauthorized(err) && !url.includes("/auth/login")) {
           setEmail(null);
-          router.replace("/admin/login");
+          router.replace("/sharp/login");
         }
         return Promise.reject(err);
       },
@@ -50,7 +50,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     admin
       .me()
       .then((u) => !cancelled && setEmail(u.email))
-      .catch(() => !cancelled && router.replace("/admin/login"))
+      .catch(() => !cancelled && router.replace("/sharp/login"))
       .finally(() => !cancelled && setChecking(false));
     return () => {
       cancelled = true;
@@ -62,7 +62,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       await admin.logout();
     } finally {
       toast.success("Signed out");
-      router.replace("/admin/login");
+      router.replace("/sharp/login");
     }
   }
 
@@ -78,13 +78,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   const active = (href: string, exact: boolean) =>
-    exact ? pathname === href : pathname.startsWith(href) && pathname !== "/admin/participants/new";
+    exact ? pathname === href : pathname.startsWith(href) && pathname !== "/sharp/participants/new";
 
   return (
     <div className="min-h-dvh bg-paper md:grid md:grid-cols-[15rem_1fr]">
       <aside className="border-b border-ink/10 bg-ink text-paper md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:border-b-0">
         <div className="flex items-center justify-between px-5 py-4 md:block md:py-8">
-          <Link href="/admin" className="block leading-none">
+          <Link href="/sharp" className="block leading-none">
             <span className="text-[13px] font-semibold uppercase tracking-[0.22em]">5,000 People</span>
             <span className="mt-1 block text-[9px] uppercase tracking-[0.34em] text-paper/50">Admin</span>
           </Link>

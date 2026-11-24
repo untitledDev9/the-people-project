@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Mail } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 import { ErrorState } from "@/components/ui/States";
+import { telLink, whatsappLink } from "@/lib/contact";
 import { safe } from "@/lib/safe";
 import { getSettings } from "@/services/public";
 
@@ -34,6 +35,28 @@ export default async function ContactPage() {
           <p className="border-y border-ink/15 py-8 text-stone">
             A contact email has not been set up yet. In the meantime, reach out through social media below.
           </p>
+        )}
+
+        {(settings.whatsapp || settings.phone) && (
+          <div className="grid gap-px overflow-hidden rounded-xl border border-ink/15 bg-ink/15 sm:grid-cols-2">
+            {settings.whatsapp && (
+              <a
+                href={whatsappLink(settings.whatsapp)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block bg-paper p-6 hover:bg-sand/60"
+              >
+                <span className="eyebrow flex items-center gap-2"><MessageCircle className="size-3.5" /> WhatsApp</span>
+                <span className="mt-2 block text-lg group-hover:underline">{settings.whatsapp}</span>
+              </a>
+            )}
+            {settings.phone && (
+              <a href={telLink(settings.phone)} className="group block bg-paper p-6 hover:bg-sand/60">
+                <span className="eyebrow flex items-center gap-2"><Phone className="size-3.5" /> Call</span>
+                <span className="mt-2 block text-lg group-hover:underline">{settings.phone}</span>
+              </a>
+            )}
+          </div>
         )}
 
         <div>

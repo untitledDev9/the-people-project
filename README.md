@@ -20,7 +20,9 @@ npm run dev                  # http://localhost:3000
 | `NEXT_PUBLIC_API_URL` | Base URL of the API, e.g. `http://localhost:4000` (no trailing slash) |
 | `NEXT_PUBLIC_SITE_URL` | Public URL of this site. Used for Open Graph, canonical URLs, the sitemap and robots.txt |
 
-Admin lives at `/admin` (redirects to `/admin/login`). The admin account is created from the **server** repo with `npm run create-admin`.
+For production, edit [`.env.production`](.env.production) (public values only, safe to commit) or set the same variables in your host's dashboard, which take priority. `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing them.
+
+Admin lives at `/sharp` (redirects to `/sharp/login`). The admin account is created from the **server** repo with `npm run create-admin`.
 
 ## Scripts
 
@@ -29,8 +31,8 @@ Admin lives at `/admin` (redirects to `/admin/login`). The admin account is crea
 ## Pages
 
 - Public: `/`, `/people`, `/people/[number]`, `/about`, `/contact`, `/privacy`
-- Admin: login, overview, participants (list, new, edit, preview), settings
-- SEO: `/sitemap.xml` (static pages + every published person, refreshed hourly), `/robots.txt` (blocks `/admin`), favicon (`app/icon.svg`), default share image (`app/opengraph-image.tsx`)
+- Admin (`/sharp`): login, overview, participants (list, new, edit, preview), settings
+- SEO: `/sitemap.xml` (static pages + every published person, refreshed hourly), `/robots.txt`, favicon (`app/icon.svg`), default share image (`app/opengraph-image.tsx`)
 
 The admin can manage participants (publish/unpublish, preview, media uploads) and site settings (name, tagline, About text, contact email, social links, featured people, hero image). Publishing requires the participant's consent, which the API enforces.
 
@@ -46,7 +48,7 @@ Deploy to Vercel, Netlify or similar. Set `NEXT_PUBLIC_API_URL` to the API's pub
 
 ```
 app/(site)/    public pages
-app/admin/     admin pages
+app/sharp/     admin pages (URL is /sharp)
 components/    reusable UI (+ admin/, ui/)
 services/      Axios API calls (public.ts, admin.ts)
 lib/ types/    helpers and shared types

@@ -19,7 +19,7 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await admin.login(email.trim(), password);
-      router.replace("/admin");
+      router.replace("/sharp");
     } catch (err) {
       setError(getErrorMessage(err, "Could not sign in."));
       setBusy(false);

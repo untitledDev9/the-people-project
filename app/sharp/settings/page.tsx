@@ -41,6 +41,9 @@ export default function AdminSettingsPage() {
     if (!s!.description.trim()) e.description = "Required";
     if (!s!.aboutText.trim()) e.aboutText = "Required";
     if (s!.contactEmail && !/^\S+@\S+\.\S+$/.test(s!.contactEmail)) e.contactEmail = "Enter a valid email";
+    for (const k of ["whatsapp", "phone"] as const) {
+      if (s![k] && !/^[+]?[0-9][0-9 ()-]{6,24}$/.test(s![k])) e[k] = "Enter a valid phone number, e.g. +2349012345678";
+    }
     for (const k of ["tiktok", "instagram", "youtube"] as const) {
       const v = s!.socialLinks[k];
       if (v && !/^https?:\/\//i.test(v)) e[k] = "Must start with http:// or https://";
@@ -60,6 +63,8 @@ export default function AdminSettingsPage() {
     f.set("description", s!.description.trim());
     f.set("aboutText", s!.aboutText.trim());
     f.set("contactEmail", s!.contactEmail.trim());
+    f.set("whatsapp", s!.whatsapp.trim());
+    f.set("phone", s!.phone.trim());
     f.set("tiktok", s!.socialLinks.tiktok.trim());
     f.set("instagram", s!.socialLinks.instagram.trim());
     f.set("youtube", s!.socialLinks.youtube.trim());
@@ -92,6 +97,8 @@ export default function AdminSettingsPage() {
         <Row label="Homepage description" error={errors.description}><textarea className="field" rows={4} value={s.description} onChange={(e) => set("description", e.target.value)} maxLength={3000} /></Row>
         <Row label="About page text" error={errors.aboutText} hint="Leave a blank line between paragraphs."><textarea className="field" rows={10} value={s.aboutText} onChange={(e) => set("aboutText", e.target.value)} maxLength={10000} /></Row>
         <Row label="Contact email" error={errors.contactEmail}><input type="email" className="field" value={s.contactEmail} onChange={(e) => set("contactEmail", e.target.value)} /></Row>
+        <Row label="WhatsApp number" error={errors.whatsapp} hint="International format, e.g. +2349012345678."><input type="tel" className="field" value={s.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} maxLength={30} /></Row>
+        <Row label="Phone (calls)" error={errors.phone} hint="International format, e.g. +2347012345678."><input type="tel" className="field" value={s.phone} onChange={(e) => set("phone", e.target.value)} maxLength={30} /></Row>
 
         <fieldset className="space-y-6 rounded-xl border border-ink/15 p-5">
           <legend className="eyebrow px-2">Social links</legend>

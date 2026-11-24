@@ -59,6 +59,8 @@ export interface SiteSettings {
   description: string;
   aboutText: string;
   contactEmail: string;
+  whatsapp: string;
+  phone: string;
   socialLinks: { tiktok: string; instagram: string; youtube: string };
   heroImageUrl: string | null;
   featuredParticipants: PublicParticipant[];

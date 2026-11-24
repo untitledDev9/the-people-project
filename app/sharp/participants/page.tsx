@@ -79,7 +79,7 @@ export default function AdminParticipantsPage() {
           <p className="eyebrow">Participants</p>
           <h1 className="display mt-2 text-4xl sm:text-5xl">Everyone met</h1>
         </div>
-        <Link href="/admin/participants/new" className="btn-solid">+ Add participant</Link>
+        <Link href="/sharp/participants/new" className="btn-solid">+ Add participant</Link>
       </div>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_auto_auto]">
@@ -117,7 +117,7 @@ export default function AdminParticipantsPage() {
           query || status !== "all" ? (
             <EmptyState title="No matches.">Try a different search or filter.</EmptyState>
           ) : (
-            <EmptyState title="No participants yet." action={{ href: "/admin/participants/new", label: "Add the first one" }}>
+            <EmptyState title="No participants yet." action={{ href: "/sharp/participants/new", label: "Add the first one" }}>
               Everyone you add will show up here.
             </EmptyState>
           )
@@ -148,7 +148,7 @@ export default function AdminParticipantsPage() {
                       <IconBtn label={p.isPublished ? "Unpublish" : "Publish"} onClick={() => togglePublish(p)}>
                         {p.isPublished ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                       </IconBtn>
-                      <Link href={`/admin/participants/${p.id}`} aria-label={`Edit ${p.displayName}`} title="Edit" className="flex size-10 items-center justify-center rounded-lg hover:bg-sand">
+                      <Link href={`/sharp/participants/${p.id}`} aria-label={`Edit ${p.displayName}`} title="Edit" className="flex size-10 items-center justify-center rounded-lg hover:bg-sand">
                         <Pencil className="size-4" />
                       </Link>
                       <IconBtn label="Delete" onClick={() => setToDelete(p)}>
