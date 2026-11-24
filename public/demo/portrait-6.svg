@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Demo portrait 6">
+<rect width="800" height="1000" fill="#e9e2d3"/>
+<circle cx="414" cy="400" r="128" fill="#2e2a25"/>
+<path d="M144 1000 C164 700 294 600 414 600 C534 600 664 700 684 1000 Z" fill="#2e2a25"/>
+<text x="400" y="960" font-family="sans-serif" font-size="22" letter-spacing="8" text-anchor="middle" fill="#2e2a25" opacity="0.55">DEMO PLACEHOLDER</text>
+</svg>
