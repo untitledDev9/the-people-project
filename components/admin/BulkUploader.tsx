@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, RefreshCw, Upload, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, RefreshCw, Upload, X } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import { getDuplicates, getErrorMessage } from "@/lib/api";
 import { pad } from "@/lib/format";
@@ -35,6 +36,15 @@ interface Item {
   duplicateOf: string | null; // name clash waiting for "different person"
 }
 
+/** Numbers the next `count` people will get: empty numbers first, then brand-new ones. */
+function predictNumbers(count: number, slots: SlotInfo): number[] {
+  const vacant = [...slots.vacant];
+  let n = slots.seq !== undefined ? slots.seq + 1 : Math.max(slots.next - 1, ...slots.vacant, 0) + 1;
+  const out: number[] = [];
+  for (let i = 0; i < count; i++) out.push(vacant.length ? vacant.shift()! : n++);
+  return out;
+}
+
 const today = () => new Date().toISOString().slice(0, 10);
 const mb = (n: number) => `${(n / 1024 / 1024).toFixed(n > 10 * 1024 * 1024 ? 0 : 1)} MB`;
 let counter = 0;
@@ -48,6 +58,7 @@ export function BulkUploader() {
   const [consentAll, setConsentAll] = useState(false);
   const [slots, setSlots] = useState<SlotInfo | null>(null);
   const [saving, setSaving] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handles = useRef(new Map<string, UploadHandle>());
   const itemsRef = useRef<Item[]>([]);
@@ -177,6 +188,29 @@ export function BulkUploader() {
     setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
+  /** Swap with the neighbouring unsaved row, which changes who gets which number. */
+  function move(id: string, dir: -1 | 1) {
+    setItems((prev) => {
+      const open = prev.map((it, i) => (it.savedNumber === null ? i : -1)).filter((i) => i >= 0);
+      const pos = open.findIndex((i) => prev[i].id === id);
+      const target = pos + dir;
+      if (pos < 0 || target < 0 || target >= open.length) return prev;
+      const next = [...prev];
+      [next[open[pos]], next[open[target]]] = [next[open[target]], next[open[pos]]];
+      return next;
+    });
+  }
+
+  /** Re-read the numbers from the server, then ask for confirmation. */
+  async function reviewNumbers() {
+    try {
+      setSlots(await admin.getSlots());
+    } catch {
+      /* keep the numbers we already have */
+    }
+    setConfirmOpen(true);
+  }
+
   function retry(id: string) {
     handles.current.delete(id);
     patch(id, { status: "queued", error: null, progress: 0 });
@@ -242,6 +276,11 @@ export function BulkUploader() {
   const ready = pending.filter((i) => i.status === "done" && i.name.trim() && !i.duplicateOf);
   const uploadingCount = pending.filter((i) => i.status === "uploading" || i.status === "queued").length;
   const savedItems = items.filter((i) => i.savedNumber !== null);
+  const planned = slots ? predictNumbers(ready.length, slots) : [];
+  const plannedFor = (id: string) => {
+    const i = ready.findIndex((r) => r.id === id);
+    return i >= 0 ? (planned[i] ?? null) : null;
+  };
 
   return (
     <div className="max-w-3xl">
@@ -249,7 +288,7 @@ export function BulkUploader() {
       <h1 className="display mt-2 text-4xl sm:text-5xl">Add many at once</h1>
       <p className="mt-3 text-sm text-stone">
         Pick several videos. They upload in the background, a few at a time. Give each one a name, then save them all.
-        {slots && <> Numbers start at <strong className="text-ink">#{pad(slots.next)}</strong>{slots.vacant.length ? " (filling empty numbers first)" : ""} and follow the order of the list.</>}
+        {slots && <> The next number is <strong className="text-ink">#{pad(slots.next)}</strong>{slots.vacant.length ? " (empty numbers are filled first)" : ""}. Each ready person shows the number they will get. Use the arrows to change the order, and you confirm the numbers before anything is saved.</>}
       </p>
 
       <label className="mt-8 flex cursor-pointer flex-col items-center gap-3 rounded-xl border border-dashed border-ink/30 bg-white/40 px-6 py-10 text-center hover:bg-white/70">
@@ -291,10 +330,23 @@ export function BulkUploader() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className="truncate text-sm font-medium">
-                      <span className="text-stone">{idx + 1}.</span> {it.file.name}{" "}
+                      {plannedFor(it.id) !== null ? (
+                        <span className="mr-1.5 rounded bg-ink px-1.5 py-0.5 text-xs font-semibold text-paper">#{pad(plannedFor(it.id)!)}</span>
+                      ) : (
+                        <span className="mr-1.5 rounded bg-sand px-1.5 py-0.5 text-xs text-stone">{it.status === "done" ? "needs name" : "not ready"}</span>
+                      )}
+                      {it.file.name}{" "}
                       <span className="font-normal text-stone">· {mb(it.file.size)}</span>
                       {formatRecorded(it.file) && <span className="block text-xs font-normal text-stone">Recorded {formatRecorded(it.file)}</span>}
                     </p>
+                    <div className="-mr-1 -mt-1 flex shrink-0 items-center">
+                      <button type="button" onClick={() => move(it.id, -1)} disabled={idx === 0} aria-label="Move up (earlier number)" className="flex size-9 items-center justify-center rounded-lg text-stone hover:bg-sand hover:text-ink disabled:opacity-30">
+                        <ChevronUp className="size-4" />
+                      </button>
+                      <button type="button" onClick={() => move(it.id, 1)} disabled={idx === pending.length - 1} aria-label="Move down (later number)" className="flex size-9 items-center justify-center rounded-lg text-stone hover:bg-sand hover:text-ink disabled:opacity-30">
+                        <ChevronDown className="size-4" />
+                      </button>
+                    </div>
                     <button type="button" onClick={() => remove(it.id)} aria-label={`Remove ${it.file.name}`} className="-mr-1 -mt-1 flex size-9 shrink-0 items-center justify-center rounded-lg text-stone hover:bg-sand hover:text-ink">
                       <X className="size-4" />
                     </button>
@@ -380,8 +432,8 @@ export function BulkUploader() {
 
       <div className="sticky bottom-0 z-10 -mx-5 mt-8 border-t border-ink/10 bg-paper/95 px-5 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <button type="button" onClick={saveAll} disabled={saving || ready.length === 0} className="btn-solid">
-            {saving ? "Saving…" : ready.length ? `Save ${ready.length} ${ready.length === 1 ? "person" : "people"}` : "Save"}
+          <button type="button" onClick={reviewNumbers} disabled={saving || ready.length === 0} className="btn-solid">
+            {saving ? "Saving…" : ready.length ? `Review & save ${ready.length}` : "Save"}
           </button>
           <Link href="/sharp/participants" className="btn-outline">Done</Link>
           {pending.length > 0 && (
@@ -392,6 +444,30 @@ export function BulkUploader() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm the numbers"
+        confirmLabel={`Confirm & save ${ready.length}`}
+        busy={saving}
+        onConfirm={() => {
+          setConfirmOpen(false);
+          saveAll();
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      >
+        <p>These people will be saved in this order with these numbers. Numbers never change afterwards.</p>
+        <ul className="mt-4 max-h-64 space-y-1.5 overflow-y-auto">
+          {ready.map((r, i) => (
+            <li key={r.id} className="flex items-center justify-between gap-3 rounded-lg bg-sand/60 px-3 py-2 text-ink">
+              <span className="min-w-0 truncate">
+                <strong>#{planned[i] !== undefined ? pad(planned[i]) : "?"}</strong> {r.name.trim()}
+              </span>
+              <span className="shrink-0 text-xs text-stone">{r.consent ? "published" : "draft"}</span>
+            </li>
+          ))}
+        </ul>
+      </ConfirmDialog>
     </div>
   );
 }

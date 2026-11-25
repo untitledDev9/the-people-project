@@ -98,6 +98,8 @@ export interface UploadAsset {
 export interface SlotInfo {
   next: number;
   vacant: number[];
+  /** Highest number ever handed out; new numbers continue from seq + 1. */
+  seq?: number;
 }
 
 export interface ParticipantPayload {
