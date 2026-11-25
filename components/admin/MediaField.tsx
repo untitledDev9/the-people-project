@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, Check, ImagePlus, RefreshCw, Trash2, Video, X } from "lucide-react";
+import { VideoPreview } from "@/components/admin/VideoPreview";
 import { checkFile, uploadDirect, type MediaKind, type UploadHandle } from "@/lib/upload";
+import { formatRecorded } from "@/lib/videoThumb";
 import * as admin from "@/services/admin";
 import type { UploadAsset } from "@/types";
 
@@ -184,14 +186,17 @@ export function MediaField({
           <div>
             <div className="flex gap-4">
               {isVideo ? (
-                <video src={upload.preview ?? undefined} muted playsInline preload="metadata" className="aspect-[3/4] w-28 shrink-0 rounded-lg bg-ink object-cover sm:w-36" />
+                <VideoPreview src={upload.preview ?? ""} className="w-28 sm:w-36" />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={upload.preview ?? undefined} alt="Selected photo" className="aspect-[4/5] w-28 shrink-0 rounded-lg object-cover sm:w-36" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{upload.file.name}</p>
-                <p className="text-xs text-stone">{mb(upload.file.size)}</p>
+                <p className="text-xs text-stone">
+                  {mb(upload.file.size)}
+                  {isVideo && formatRecorded(upload.file) ? ` · Recorded ${formatRecorded(upload.file)}` : ""}
+                </p>
 
                 {upload.status === "uploading" && (
                   <div className="mt-3" role="status" aria-live="polite">

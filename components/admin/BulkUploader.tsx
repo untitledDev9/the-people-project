@@ -6,7 +6,9 @@ import { Check, RefreshCw, Upload, X } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { getDuplicates, getErrorMessage } from "@/lib/api";
 import { pad } from "@/lib/format";
+import { VideoPreview } from "@/components/admin/VideoPreview";
 import { takePendingFiles } from "@/lib/pendingFiles";
+import { formatRecorded } from "@/lib/videoThumb";
 import { checkFile, uploadDirect, type UploadHandle } from "@/lib/upload";
 import * as admin from "@/services/admin";
 import type { SlotInfo, UploadAsset } from "@/types";
@@ -285,12 +287,13 @@ export function BulkUploader() {
           {pending.map((it, idx) => (
             <li key={it.id} className="rounded-xl border border-ink/15 bg-white/50 p-4">
               <div className="flex gap-4">
-                <video src={it.preview} muted playsInline preload="metadata" className="aspect-[3/4] w-20 shrink-0 rounded-lg bg-ink object-cover sm:w-28" />
+                <VideoPreview src={it.preview} className="w-20 sm:w-28" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className="truncate text-sm font-medium">
                       <span className="text-stone">{idx + 1}.</span> {it.file.name}{" "}
                       <span className="font-normal text-stone">· {mb(it.file.size)}</span>
+                      {formatRecorded(it.file) && <span className="block text-xs font-normal text-stone">Recorded {formatRecorded(it.file)}</span>}
                     </p>
                     <button type="button" onClick={() => remove(it.id)} aria-label={`Remove ${it.file.name}`} className="-mr-1 -mt-1 flex size-9 shrink-0 items-center justify-center rounded-lg text-stone hover:bg-sand hover:text-ink">
                       <X className="size-4" />
